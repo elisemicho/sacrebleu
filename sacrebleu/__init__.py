@@ -23,7 +23,7 @@ from .utils import get_source_file, get_reference_files
 from .utils import get_available_testsets, get_langpairs_for_testset
 from .dataset import DATASETS
 from .tokenizers import TOKENIZERS, DEFAULT_TOKENIZER
-from .metrics import BLEU, CHRF
+from .metrics import BLEU, BR_BLEU, CHRF
 
 # Backward compatibility functions for old style API access (<= 1.4.10)
 from .compat import *

@@ -2,7 +2,7 @@ from typing import Union, Iterable, List
 from argparse import Namespace
 
 from .tokenizers import DEFAULT_TOKENIZER
-from .metrics import BLEU, CHRF, TER, BLEUScore, CHRFScore, TERScore
+from .metrics import BLEU, CHRF, TER, BLEUScore, CHRFScore, TERScore, BR_BLEU, BR_BLEUScore
 
 
 ######################################################################
@@ -32,6 +32,33 @@ def corpus_bleu(sys_stream: Union[str, Iterable[str]],
         short=False, lc=lowercase, tokenize=tokenize)
 
     metric = BLEU(args)
+    return metric.corpus_score(
+        sys_stream, ref_streams, use_effective_order=use_effective_order)
+
+def corpus_break_centered_bleu(sys_stream: Union[str, Iterable[str]],
+                ref_streams: Union[str, List[Iterable[str]]],
+                smooth_method='exp',
+                smooth_value=None,
+                force=False,
+                lowercase=False,
+                tokenize=DEFAULT_TOKENIZER,
+                use_effective_order=False) -> BR_BLEUScore:
+    """Produces BLEU scores along with its sufficient statistics from a source against one or more references.
+
+    :param sys_stream: The system stream (a sequence of segments)
+    :param ref_streams: A list of one or more reference streams (each a sequence of segments)
+    :param smooth_method: The smoothing method to use ('floor', 'add-k', 'exp' or 'none')
+    :param smooth_value: The smoothing value for `floor` and `add-k` methods. `None` falls back to default value.
+    :param force: Ignore data that looks already tokenized
+    :param lowercase: Lowercase the data
+    :param tokenize: The tokenizer to use
+    :return: a `BLEUScore` object
+    """
+    args = Namespace(
+        smooth_method=smooth_method, smooth_value=smooth_value, force=force,
+        short=False, lc=lowercase, tokenize=tokenize)
+
+    metric = BR_BLEU(args)
     return metric.corpus_score(
         sys_stream, ref_streams, use_effective_order=use_effective_order)
 
